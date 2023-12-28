@@ -14,14 +14,21 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
-  app.enableCors();
-  app.useGlobalPipes(new ValidationPipe());
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
+
+  // eslint-disable-next-line @darraghor/nestjs-typed/should-specify-forbid-unknown-values
+  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
   const config = new DocumentBuilder()
-    .setTitle('NestJs Boilerplate')
-    .setDescription('NestJs Boilerplate API.')
+    .setTitle('Notes App')
+    .setDescription('Notes App API.')
     .setVersion('1.0')
-    .addTag('users')
     .build();
 
   SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, config));

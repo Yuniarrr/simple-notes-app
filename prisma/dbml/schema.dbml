@@ -2,8 +2,10 @@
 //// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 //// ------------------------------------------------------
 
-Table User {
+Table Notes {
   id String [pk]
-  email String [unique, not null]
-  name String [not null]
+  title String [not null]
+  body String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
 }

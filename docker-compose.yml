@@ -1,30 +1,32 @@
 services:
-  app:
-    container_name: api_nestjs
-    build:
-      dockerfile: Dockerfile
-      context: .
-      target: development
-    volumes:
-      - .:/usr/src/app
-    env_file:
-      - .env
-    command: pnpm start:dev
-    ports:
-      - 3000:3000
-    depends_on:
-      - db
+  # app:
+  #   container_name: api_nestjs
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: .
+  #     target: development
+  #   volumes:
+  #     - .:/usr/src/app
+  #   env_file:
+  #     - .env
+  #   command: pnpm start:dev
+  #   ports:
+  #     - 3000:3000
+  #   depends_on:
+  #     - db
 
-  db:
+  notes-app:
+    container_name: dibimbing-kuasar
     image: postgres:latest
-    container_name: db_nestjs
     restart: always
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASS}
     ports:
-      - '5432:5432'
+      - ${DATABASE_PORT}:5432
+    expose:
+      - ${DATABASE_PORT}
     volumes:
       - pgdata:/data/postgres
 
