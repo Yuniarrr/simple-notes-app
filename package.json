@@ -1,9 +1,9 @@
 {
-  "name": "nestjs-boilerplate",
+  "name": "notes-app-backend",
   "version": "1.0.5",
-  "description": "NestJS boilerplate",
+  "description": "Notes App Backend",
   "license": "MIT",
-  "author": "Gabriel Guedes <gabrielrguedess@gmail.com>",
+  "author": "Midyanisa Yuniar",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
