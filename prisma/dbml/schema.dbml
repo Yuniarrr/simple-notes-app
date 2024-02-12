@@ -19,6 +19,8 @@ Table Category {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   CategoryNotes CategoryNotes [not null]
+  user_id String [not null]
+  user User [not null]
 }
 
 Table CategoryNotes {
@@ -39,9 +41,12 @@ Table User {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   Notes Notes [not null]
+  Category Category [not null]
 }
 
 Ref: Notes.user_id > User.id
+
+Ref: Category.user_id > User.id
 
 Ref: CategoryNotes.category_id > Category.id
 
