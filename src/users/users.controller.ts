@@ -1,34 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
+import { GetUser } from 'common/decorator';
+
+import { UpdateUserDto } from './dto/index';
+import { UsersService } from './users.service';
+
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOkResponse({
+    description: 'Get me',
+  })
+  @Get('me')
+  async findMe(@GetUser('id') id: string) {
+    const user = await this.usersService.findMe(id);
+
+    return user;
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
-
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOkResponse({
+    description: 'update user data',
+  })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
+  async update(
+    @GetUser('id') id: string,
+    @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
+  ) {
+    const user = await this.usersService.updateUser(id, updateUserDto);
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return user;
   }
 }

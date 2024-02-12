@@ -1,26 +1,69 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
+import * as bcryptjs from 'bcryptjs';
+import { JWT_CONSTANT } from 'common';
+
+import { PrismaService } from '../infra/database/prisma/prisma.service';
+import { type LoginAuthDto, type CreateAuthDto } from './dto/index';
+
+const salt = bcryptjs.genSaltSync(12);
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly prisma: PrismaService,
+    private jwt: JwtService,
+  ) {}
+
+  async create(data: CreateAuthDto) {
+    const hashedPassword = bcryptjs.hashSync(data.password, salt);
+    const create = { ...data, password: hashedPassword };
+
+    const user = await this.prisma.user.create({
+      data: create,
+    });
+
+    return user.id;
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async login(data: LoginAuthDto) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: data.email,
+      },
+    });
+
+    if (!user) {
+      throw new ForbiddenException('Credentials not found');
+    }
+
+    const isPasswordMatch = bcryptjs.compareSync(data.password, user.password);
+
+    if (!isPasswordMatch) {
+      throw new ForbiddenException('Credentials not found');
+    }
+
+    const token = await this.getToken(user.id, user.email);
+
+    return token;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+  async getToken(user_id: string, email: string): Promise<{ token: string }> {
+    const payload = {
+      user_id,
+      email,
+    };
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    const token = await this.jwt.signAsync(payload, {
+      secret: JWT_CONSTANT.JWT_SECRET,
+      expiresIn: JWT_CONSTANT.JWT_EXPIRES_IN,
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    return {
+      token,
+    };
   }
 }
