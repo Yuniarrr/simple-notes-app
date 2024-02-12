@@ -7,10 +7,14 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -22,6 +26,8 @@ import { NotesService } from './notes.service';
 
 @ApiTags('Notes')
 @Controller('notes')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 export class NotesController {
   constructor(private readonly notesService: NotesService) {}
 
@@ -47,21 +53,27 @@ export class NotesController {
   @ApiOkResponse({
     description: 'Find all note by id',
   })
+  @ApiNotFoundResponse({
+    description: 'Note not found',
+  })
   @Get(':id')
-  findOne(@Param('id') id: string, @GetUser('id') user_id: string) {
-    return this.notesService.findOne(id, user_id);
+  async findOne(@Param('id') id: string, @GetUser('id') user_id: string) {
+    return await this.notesService.findOne(id, user_id);
   }
 
   @ApiOkResponse({
     description: 'Update note by id',
   })
   @Patch(':id')
-  update(
+  @ApiNotFoundResponse({
+    description: 'Note not found',
+  })
+  async update(
     @Param('id') id: string,
     @Body() updateNoteDto: UpdateNoteDto,
     @GetUser('id') user_id: string,
   ) {
-    return this.notesService.update(id, updateNoteDto, user_id);
+    return await this.notesService.update(id, updateNoteDto, user_id);
   }
 
   @ApiOkResponse({
@@ -70,8 +82,11 @@ export class NotesController {
   @ApiNoContentResponse({
     description: 'Delete note by id',
   })
+  @ApiNotFoundResponse({
+    description: 'Note not found',
+  })
   @Delete(':id')
-  remove(@Param('id') id: string, @GetUser('id') user_id: string) {
-    return this.notesService.remove(id, user_id);
+  async remove(@Param('id') id: string, @GetUser('id') user_id: string) {
+    return await this.notesService.remove(id, user_id);
   }
 }

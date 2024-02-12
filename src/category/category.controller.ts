@@ -8,10 +8,14 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -23,6 +27,8 @@ import { CreateCategoryDto, UpdateCategoryDto } from './dto/index';
 
 @ApiTags('Category')
 @Controller('category')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
@@ -48,6 +54,9 @@ export class CategoryController {
   @ApiOkResponse({
     description: 'Get all categories',
   })
+  @ApiNotFoundResponse({
+    description: 'Category not found',
+  })
   @Get(':id/notes')
   async findAllNotesByCategory(
     @GetUser('id') user_id: string,
@@ -59,6 +68,9 @@ export class CategoryController {
   @ApiOkResponse({
     description: 'Get category by id',
   })
+  @ApiNotFoundResponse({
+    description: 'Category not found',
+  })
   @Get(':id')
   async findOne(@Param('id') id: number, @GetUser('id') user_id: string) {
     return await this.categoryService.findOne(id, user_id);
@@ -66,6 +78,9 @@ export class CategoryController {
 
   @ApiOkResponse({
     description: 'Update category by id',
+  })
+  @ApiNotFoundResponse({
+    description: 'Category not found',
   })
   @Patch(':id')
   async update(
@@ -81,6 +96,9 @@ export class CategoryController {
   })
   @ApiNoContentResponse({
     description: 'Delete category by id',
+  })
+  @ApiNotFoundResponse({
+    description: 'Category not found',
   })
   @Delete(':id')
   async remove(@Param('id') id: number, @GetUser('id') user_id: string) {

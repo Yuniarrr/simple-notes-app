@@ -25,7 +25,7 @@ export class CategoryService {
   }
 
   async findOne(id: number, user_id: string) {
-    const category = await this.prisma.category.findUniqueOrThrow({
+    const category = await this.prisma.category.findUnique({
       where: { id, user_id },
     });
 
@@ -62,6 +62,10 @@ export class CategoryService {
       throw new NotFoundException('Category not found');
     }
 
+    await this.prisma.categoryNotes.deleteMany({
+      where: { category_id: id },
+    });
+
     const category = await this.prisma.category.delete({
       where: { id, user_id },
     });
@@ -70,6 +74,12 @@ export class CategoryService {
   }
 
   async findAllNotesByCategory(id: number, user_id: string) {
+    const isExist = await this.findOne(id, user_id);
+
+    if (!isExist) {
+      throw new NotFoundException('Category not found');
+    }
+
     return await this.prisma.notes.findMany({
       where: { user_id, CategoryNotes: { some: { category_id: id } } },
     });

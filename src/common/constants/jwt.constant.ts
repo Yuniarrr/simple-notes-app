@@ -1,4 +1,4 @@
 export const JWT_CONSTANT = {
-  JWT_SECRET: '',
+  JWT_SECRET: 'secret',
   JWT_EXPIRES_IN: '3h',
 };

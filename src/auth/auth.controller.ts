@@ -18,7 +18,7 @@ export class AuthController {
   async create(@Body(new ValidationPipe()) createAuthDto: CreateAuthDto) {
     const user = await this.authService.create(createAuthDto);
 
-    return user;
+    return { id: user };
   }
 
   @ApiCreatedResponse({
@@ -28,6 +28,6 @@ export class AuthController {
   async login(@Body(new ValidationPipe()) data: LoginAuthDto) {
     const acccess_token = await this.authService.login(data);
 
-    return { acccess_token };
+    return { ...acccess_token };
   }
 }
