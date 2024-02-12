@@ -46,6 +46,17 @@ export class CategoryController {
   }
 
   @ApiOkResponse({
+    description: 'Get all categories',
+  })
+  @Get(':id/notes')
+  async findAllNotesByCategory(
+    @GetUser('id') user_id: string,
+    @Param('id') id: number,
+  ) {
+    return await this.categoryService.findAllNotesByCategory(id, user_id);
+  }
+
+  @ApiOkResponse({
     description: 'Get category by id',
   })
   @Get(':id')

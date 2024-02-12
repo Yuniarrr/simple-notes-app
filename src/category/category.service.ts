@@ -68,4 +68,10 @@ export class CategoryService {
 
     return category;
   }
+
+  async findAllNotesByCategory(id: number, user_id: string) {
+    return await this.prisma.notes.findMany({
+      where: { user_id, CategoryNotes: { some: { category_id: id } } },
+    });
+  }
 }
