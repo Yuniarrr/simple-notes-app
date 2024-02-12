@@ -38,3 +38,5 @@ tsconfig.build.tsbuildinfo
 
 # Env
 .env
+
+yarn.lock

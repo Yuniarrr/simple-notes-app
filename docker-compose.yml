@@ -16,7 +16,7 @@ services:
   #     - db
 
   notes-app:
-    container_name: dibimbing-kuasar
+    container_name: notes-app
     image: postgres:latest
     restart: always
     environment:

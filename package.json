@@ -27,32 +27,17 @@
     "test:watch": "jest --watch",
     "typecheck": "tsc --noEmit"
   },
-  "husky": {
-    "hooks": {
-      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
   "lint-staged": {
-    "package.json": "pnpm sort:package",
     "src/**/*.ts": [
-      "bash -c tsc --noEmit",
-      "pnpm find-deadcode",
-      "pnpm lint --fix",
-      "pnpm test -- --findRelatedTests --bail --passWithNoTests"
+      "prettier --write --ignore-unknown"
     ],
     "test/**/*.ts": [
-      "pnpm test:e2e -- --findRelatedTests --bail --passWithNoTests"
+      "prettier --write --ignore-unknown"
     ]
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
   },
   "dependencies": {
     "@fastify/static": "^6.10.2",
-    "@nestjs/cache-manager": "^2.0.0",
+    "@nestjs/cache-manager": "^2.2.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
@@ -81,6 +66,7 @@
     "@types/express": "^4.17.17",
     "@types/jest": "29.5.11",
     "@types/node": "^20.2.5",
+    "@types/passport-local": "^1.0.38",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
@@ -112,9 +98,5 @@
     "tsconfig-paths": "4.2.0",
     "typescript": "^5.1.3",
     "webpack": "^5.86.0"
-  },
-  "packageManager": "yarn@4.0.2",
-  "engines": {
-    "node": ">=18.0.0"
   }
 }

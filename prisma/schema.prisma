@@ -19,4 +19,42 @@ model Notes {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  CategoryNotes CategoryNotes[]
+  user_id       String
+  user          User            @relation(fields: [user_id], references: [id])
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  CategoryNotes CategoryNotes[]
+}
+
+model CategoryNotes {
+  id Int @id @default(autoincrement())
+
+  category_id Int
+  category    Category @relation(fields: [category_id], references: [id])
+  note_id     String
+  notes       Notes    @relation(fields: [note_id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model User {
+  id String @id @default(uuid())
+
+  username String
+  email    String @unique
+  password String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  Notes     Notes[]
 }

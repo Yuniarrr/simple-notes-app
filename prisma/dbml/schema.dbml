@@ -8,4 +8,41 @@ Table Notes {
   body String
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
+  CategoryNotes CategoryNotes [not null]
+  user_id String [not null]
+  user User [not null]
 }
+
+Table Category {
+  id Int [pk, increment]
+  name String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  CategoryNotes CategoryNotes [not null]
+}
+
+Table CategoryNotes {
+  id Int [pk, increment]
+  category_id Int [not null]
+  category Category [not null]
+  note_id String [not null]
+  notes Notes [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+}
+
+Table User {
+  id String [pk]
+  username String [not null]
+  email String [unique, not null]
+  password String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  Notes Notes [not null]
+}
+
+Ref: Notes.user_id > User.id
+
+Ref: CategoryNotes.category_id > Category.id
+
+Ref: CategoryNotes.note_id > Notes.id
