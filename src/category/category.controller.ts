@@ -9,7 +9,12 @@ import {
   Delete,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { GetUser } from 'common/decorator';
 
@@ -61,6 +66,9 @@ export class CategoryController {
   }
 
   @ApiOkResponse({
+    description: 'Delete category by id',
+  })
+  @ApiNoContentResponse({
     description: 'Delete category by id',
   })
   @Delete(':id')
